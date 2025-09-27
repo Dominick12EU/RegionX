@@ -1,0 +1,5 @@
+name: RegionX
+version: '${version}'
+main: it.dominick.regionx.RegionX
+api-version: '1.13'
+authors: [Dominick12]

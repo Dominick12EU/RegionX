@@ -41,7 +41,7 @@ public final class RegionX extends JavaPlugin {
         regionManager = new RegionManager(this);
 
         commandManager = BukkitCommandManager.create(this);
-        it.dominick.regionx.handlers.ParticleHandler particleHandler = new ParticleHandler();
+        ParticleHandler particleHandler = new ParticleHandler();
         registerCommands(
                 new CmdRegion(regionManager, particleHandler)
         );

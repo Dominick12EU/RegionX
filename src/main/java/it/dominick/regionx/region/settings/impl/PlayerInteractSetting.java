@@ -22,8 +22,9 @@ public class PlayerInteractSetting extends RegionSetting {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (!event.hasBlock() || event.getClickedBlock() == null) return;
+
         Player player = event.getPlayer();
-        assert event.getClickedBlock() != null;
         if (shouldProcess(player, event.getClickedBlock().getLocation())) {
             handleEvent(event);
         }
@@ -32,13 +33,9 @@ public class PlayerInteractSetting extends RegionSetting {
     @Override
     protected void handleEvent(Event event) {
         PlayerInteractEvent interactEvent = (PlayerInteractEvent) event;
-        Player player = interactEvent.getPlayer();
-        Region region = getRegionManager().getRegion(((PlayerInteractEvent) event)
-                .getClickedBlock().getLocation());
+        Region region = getRegionManager().getRegion(interactEvent.getClickedBlock().getLocation());
 
-        if (((PlayerInteractEvent) event).getClickedBlock() != null) {
-            triggerAPIEvent(player, event, region);
-            interactEvent.setCancelled(true);
-        }
+        triggerAPIEvent(interactEvent.getPlayer(), interactEvent, region);
+        interactEvent.setCancelled(true);
     }
 }

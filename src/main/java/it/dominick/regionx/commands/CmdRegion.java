@@ -133,10 +133,15 @@ public class CmdRegion {
             return;
         }
 
-        StringBuilder regionList = new StringBuilder("&aRegioni:\n");
-        regions.forEach(region -> regionList.append("&e- ").append(region.getName()).append("\n"));
-
-        ChatUtils.send(sender, regionList.toString());
+        ChatUtils.send(sender, "&aRegioni:");
+        for (Region region : regions) {
+            int count = UserRegion.getPlayersInRegion(region).size();
+            String line = "&e- " + region.getName();
+            if (count > 0) {
+                line += " &7(" + count + " " + (count == 1 ? "player" : "players") + ")";
+            }
+            ChatUtils.send(sender, line);
+        }
     }
 
     @Command("bypass")

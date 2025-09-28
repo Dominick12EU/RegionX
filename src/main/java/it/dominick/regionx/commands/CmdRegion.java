@@ -61,7 +61,7 @@ public class CmdRegion {
 
             Location pos2 = regionManager.getPlayerPos2(player);
             if (pos2 != null) {
-                particleHandler.showAreaParticles(player, player.getEyeLocation(), pos2);
+                particleHandler.showAreaParticles(player, pos1, pos2);
             }
         }
     }
@@ -98,6 +98,7 @@ public class CmdRegion {
                 return;
             }
 
+            particleHandler.playBlackHoleCreate(player, pos1, pos2);
             regionManager.addRegion(name, pos1, pos2);
             ChatUtils.send(player, "&aRegione '" + name + "' creata!");
         }

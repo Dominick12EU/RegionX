@@ -22,7 +22,8 @@ public class FallDamageSetting extends RegionSetting {
 
     @EventHandler
     public void onFallDamage(EntityDamageEvent event) {
-        if (checkIfInRegion(event.getEntity().getLocation())) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (shouldProcess(player, player.getLocation())) {
             handleEvent(event);
         }
     }
@@ -30,9 +31,8 @@ public class FallDamageSetting extends RegionSetting {
     @Override
     protected void handleEvent(Event event) {
         EntityDamageEvent fallDamageEvent = (EntityDamageEvent) event;
-        if (fallDamageEvent.getEntity() instanceof Player &&
+        if (fallDamageEvent.getEntity() instanceof Player player &&
                 fallDamageEvent.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            Player player = (Player) fallDamageEvent.getEntity();
             Region region = getRegionManager().getRegion(player.getLocation());
 
             triggerAPIEvent(player, event, region);

@@ -22,7 +22,9 @@ public class PlayerInteractSetting extends RegionSetting {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (checkIfInRegion(event.getPlayer().getLocation())) {
+        Player player = event.getPlayer();
+        assert event.getClickedBlock() != null;
+        if (shouldProcess(player, event.getClickedBlock().getLocation())) {
             handleEvent(event);
         }
     }
@@ -31,7 +33,8 @@ public class PlayerInteractSetting extends RegionSetting {
     protected void handleEvent(Event event) {
         PlayerInteractEvent interactEvent = (PlayerInteractEvent) event;
         Player player = interactEvent.getPlayer();
-        Region region = getRegionManager().getRegion(player.getLocation());
+        Region region = getRegionManager().getRegion(((PlayerInteractEvent) event)
+                .getClickedBlock().getLocation());
 
         if (((PlayerInteractEvent) event).getClickedBlock() != null) {
             triggerAPIEvent(player, event, region);

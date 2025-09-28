@@ -139,6 +139,17 @@ public class CmdRegion {
         ChatUtils.send(sender, regionList.toString());
     }
 
+    @Command("bypass")
+    @Permission("region.bypass")
+    public void onBypassSubCommand(CommandSender sender) {
+        if (sender instanceof Player player) {
+            boolean toggle = UserRegion.hasBypass(player);
+            UserRegion.setBypass(player, !toggle);
+
+            ChatUtils.send(player, "&bBypass " + (!toggle ? "&aEnabled" : "&cDisabled"));
+        }
+    }
+
     @Command("gui")
     @Permission("region.admin")
     public void onGuiRegionsSubCommand(CommandSender sender) {

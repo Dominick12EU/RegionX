@@ -1,6 +1,7 @@
 package it.dominick.regionx.region.settings;
 
 import it.dominick.regionx.api.events.SettingEvent;
+import it.dominick.regionx.api.player.UserRegion;
 import it.dominick.regionx.manager.RegionManager;
 import it.dominick.regionx.region.Region;
 import lombok.Getter;
@@ -39,12 +40,21 @@ public abstract class RegionSetting implements Setting, Listener {
 
     protected abstract void handleEvent(Event event);
 
-    protected boolean checkIfInRegion(Location location) {
-        return regionManager.getRegion(location) != null;
+    protected boolean checkIfInRegion(Object obj) {
+        if (obj instanceof Location) {
+            return regionManager.getRegion((Location) obj) != null;
+        }
+        if (obj instanceof Region) {
+            return regionManager.getRegion(((Region) obj).getName()) != null;
+        }
+        return false;
     }
 
-    protected boolean checkIfInRegion(Region region) {
-        return regionManager.getRegion(region.getName()) != null;
+    protected boolean shouldProcess(Player player, Object obj) {
+        if (player != null && UserRegion.hasBypass(player)) {
+            return false;
+        }
+        return checkIfInRegion(obj);
     }
 
     protected void triggerAPIEvent(Player player, Event event, Region region) {

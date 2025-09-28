@@ -22,7 +22,8 @@ public class ItemPickupSetting extends RegionSetting {
 
     @EventHandler
     public void onItemPickup(PlayerPickupItemEvent event) {
-        if (checkIfInRegion(event.getPlayer().getLocation())) {
+        Player player = event.getPlayer();
+        if (shouldProcess(player, event.getItem().getLocation())) {
             handleEvent(event);
         }
     }
@@ -31,7 +32,8 @@ public class ItemPickupSetting extends RegionSetting {
     protected void handleEvent(Event event) {
         PlayerPickupItemEvent pickupEvent = (PlayerPickupItemEvent) event;
         Player player = pickupEvent.getPlayer();
-        Region region = getRegionManager().getRegion(player.getLocation());
+        Region region = getRegionManager().getRegion(((PlayerPickupItemEvent) event)
+                .getItem().getLocation());
 
         triggerAPIEvent(player, event, region);
         pickupEvent.setCancelled(true);

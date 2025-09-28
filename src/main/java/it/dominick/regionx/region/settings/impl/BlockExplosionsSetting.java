@@ -21,7 +21,7 @@ public class BlockExplosionsSetting extends RegionSetting {
 
     @EventHandler
     public void onExplodeBlockEvent(BlockExplodeEvent event) {
-        if (checkIfInRegion(event.getBlock().getLocation())) {
+        if (shouldProcess(null, event.getBlock().getLocation())) {
             handleEvent(event);
         }
     }

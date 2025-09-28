@@ -24,7 +24,8 @@ public class BlockMessageNotifySetting extends RegionSetting {
 
     @EventHandler
     public void onBlockMessageNotify(SettingEvent event) {
-        if (checkIfInRegion(event.getRegion())) {
+        Player player = event.getPlayer();
+        if (shouldProcess(player, event.getRegion())) {
             handleEvent(event);
         }
     }

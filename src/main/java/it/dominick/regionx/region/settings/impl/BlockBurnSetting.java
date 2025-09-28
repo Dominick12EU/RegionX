@@ -3,6 +3,7 @@ package it.dominick.regionx.region.settings.impl;
 import it.dominick.regionx.manager.RegionManager;
 import it.dominick.regionx.region.Region;
 import it.dominick.regionx.region.settings.RegionSetting;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBurnEvent;
@@ -21,7 +22,7 @@ public class BlockBurnSetting extends RegionSetting {
 
     @EventHandler
     public void onBlockBurn(BlockBurnEvent event) {
-        if (checkIfInRegion(event.getBlock().getLocation())) {
+        if (shouldProcess(null, event.getBlock().getLocation())) {
             handleEvent(event);
         }
     }

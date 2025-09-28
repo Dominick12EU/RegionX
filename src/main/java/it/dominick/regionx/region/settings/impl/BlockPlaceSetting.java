@@ -22,7 +22,8 @@ public class BlockPlaceSetting extends RegionSetting {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (checkIfInRegion(event.getBlock().getLocation())) {
+        Player player = event.getPlayer();
+        if (shouldProcess(player, event.getBlock().getLocation())) {
             handleEvent(event);
         }
     }

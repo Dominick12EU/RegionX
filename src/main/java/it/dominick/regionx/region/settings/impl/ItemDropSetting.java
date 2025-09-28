@@ -22,7 +22,8 @@ public class ItemDropSetting extends RegionSetting {
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
-        if (checkIfInRegion(event.getPlayer().getLocation())) {
+        Player player = event.getPlayer();
+        if (shouldProcess(player, player.getLocation())) {
             handleEvent(event);
         }
     }

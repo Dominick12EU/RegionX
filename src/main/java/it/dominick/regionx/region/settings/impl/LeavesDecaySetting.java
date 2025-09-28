@@ -21,7 +21,7 @@ public class LeavesDecaySetting extends RegionSetting {
 
     @EventHandler
     public void onLeavesDecay(LeavesDecayEvent event) {
-        if (checkIfInRegion(event.getBlock().getLocation())) {
+        if (shouldProcess(null, event.getBlock().getLocation())) {
             handleEvent(event);
         }
     }

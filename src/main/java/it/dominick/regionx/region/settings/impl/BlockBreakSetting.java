@@ -23,7 +23,8 @@ public class BlockBreakSetting extends RegionSetting {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if (checkIfInRegion(event.getBlock().getLocation())) {
+        Player player = event.getPlayer();
+        if (shouldProcess(player, event.getBlock().getLocation())) {
             handleEvent(event);
         }
     }

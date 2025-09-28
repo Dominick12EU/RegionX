@@ -21,7 +21,7 @@ public class BlockFadeSetting extends RegionSetting {
 
     @EventHandler
     public void onBlockFade(BlockFadeEvent event) {
-        if (checkIfInRegion(event.getBlock().getLocation())) {
+        if (shouldProcess(null, event.getBlock().getLocation())) {
             handleEvent(event);
         }
     }

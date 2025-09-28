@@ -22,7 +22,7 @@ public class EntityExplosionsSetting extends RegionSetting {
 
     @EventHandler
     public void onExplodeEntityEvent(EntityExplodeEvent event) {
-        if (checkIfInRegion(event.getEntity().getLocation())) {
+        if (shouldProcess(null, event.getEntity().getLocation())) {
             handleEvent(event);
         }
     }

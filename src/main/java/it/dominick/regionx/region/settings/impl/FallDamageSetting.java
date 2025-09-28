@@ -30,10 +30,8 @@ public class FallDamageSetting extends RegionSetting {
     @Override
     protected void handleEvent(Event event) {
         EntityDamageEvent fallDamageEvent = (EntityDamageEvent) event;
-        System.out.println("Fall damage event: " + fallDamageEvent.getCause());
         if (fallDamageEvent.getEntity() instanceof Player &&
                 fallDamageEvent.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            System.out.println("DOMINICK GAY");
             Player player = (Player) fallDamageEvent.getEntity();
             Region region = getRegionManager().getRegion(player.getLocation());
 

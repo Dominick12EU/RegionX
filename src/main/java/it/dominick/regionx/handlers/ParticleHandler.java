@@ -66,16 +66,21 @@ public class ParticleHandler {
                         boolean isVerticalEdge = isVerticalEdge(loc, minX, minZ, maxX, maxZ);
                         Particle<?> type = isVerticalEdge ? P_ENDROD : P_FLAME;
                         double jitterY = isVerticalEdge ? 0.0 : 0.02;
-                        sendParticle(p, type,
+                        sendParticle(
+                                p,
+                                type,
                                 loc.getX() + 0.5,
                                 loc.getY() + 0.5 + jitterY,
                                 loc.getZ() + 0.5,
-                                0, 0, 0,
+                                0,
+                                0,
+                                0,
                                 isVerticalEdge ? 0.0f : 0.01f,
-                                1);
+                                1
+                        );
                     }
                     if (++humTick % 16 == 0) {
-                        Location c = new Location(world, (minX+maxX)/2.0+0.5, (minY+maxY)/2.0+0.5, (minZ+maxZ)/2.0+0.5);
+                        Location c = new Location(world, (minX + maxX) / 2.0 + 0.5, (minY + maxY) / 2.0 + 0.5, (minZ + maxZ) / 2.0 + 0.5);
                         playSoundTo(player, c, Sound.BLOCK_BEACON_AMBIENT, 0.35f, 1.65f);
                     }
                     phase = (phase + 1) % DASH_SPACING;
@@ -108,7 +113,7 @@ public class ParticleHandler {
         final double cy = (minY + maxY) / 2.0 + 0.5;
         final double cz = (minZ + maxZ) / 2.0 + 0.5;
 
-        final int PARTICLE_COUNT = Math.max(60, (int)((maxX-minX+1)*(maxY-minY+1)*(maxZ-minZ+1) / 96.0));
+        final int PARTICLE_COUNT = Math.max(60, (int) ((maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1) / 96.0));
         final int TICK_PERIOD = 1;
         final double MAXD = 64.0;
         final int IN_TICKS = 18;
@@ -120,41 +125,62 @@ public class ParticleHandler {
 
         final Particle<?> P_PORTAL = new Particle<>(ParticleTypes.PORTAL);
         final Particle<?> P_ENDROD = new Particle<>(ParticleTypes.END_ROD);
-        final Particle<?> P_CLOUD  = new Particle<>(ParticleTypes.CLOUD);
-        final Particle<?> P_CRIT   = new Particle<>(ParticleTypes.CRIT);
+        final Particle<?> P_CLOUD = new Particle<>(ParticleTypes.CLOUD);
+        final Particle<?> P_CRIT = new Particle<>(ParticleTypes.CRIT);
 
         class SimP {
-            double x, y, z, vx, vy, vz;
+            double x;
+            double y;
+            double z;
+            double vx;
+            double vy;
+            double vz;
             int life;
             boolean outPhase;
+
             SimP(double x, double y, double z) {
-                this.x = x; this.y = y; this.z = z;
-                double dx = cx - x, dy = cy - y, dz = cz - z;
-                double n = Math.sqrt(dx*dx + dy*dy + dz*dz) + 1e-6;
-                double s = IN_SPEED * (0.85 + Math.random()*0.30);
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                double dx = cx - x;
+                double dy = cy - y;
+                double dz = cz - z;
+                double n = Math.sqrt(dx * dx + dy * dy + dz * dz) + 1e-6;
+                double s = IN_SPEED * (0.85 + Math.random() * 0.30);
                 this.vx = dx / n * s;
                 this.vy = dy / n * s;
                 this.vz = dz / n * s;
                 this.life = IN_TICKS + OUT_TICKS;
                 this.outPhase = false;
             }
+
             void tick() {
                 if (!outPhase) {
-                    vx *= DRAG; vy *= DRAG; vz *= DRAG;
-                    x += vx; y += vy; z += vz;
-                    double dist2 = (x-cx)*(x-cx)+(y-cy)*(y-cy)+(z-cz)*(z-cz);
+                    vx *= DRAG;
+                    vy *= DRAG;
+                    vz *= DRAG;
+                    x += vx;
+                    y += vy;
+                    z += vz;
+                    double dist2 = (x - cx) * (x - cx) + (y - cy) * (y - cy) + (z - cz) * (z - cz);
                     if (dist2 < 0.25 || life <= OUT_TICKS) {
                         outPhase = true;
-                        double rx = (Math.random()*2-1), ry = (Math.random()*2-1), rz = (Math.random()*2-1);
-                        double rn = Math.sqrt(rx*rx + ry*ry + rz*rz) + 1e-6;
-                        double s = OUT_SPEED * (0.85 + Math.random()*0.40);
-                        vx = (rx/rn) * s;
-                        vy = (ry/rn) * s + UP_BIAS;
-                        vz = (rz/rn) * s;
+                        double rx = (Math.random() * 2 - 1);
+                        double ry = (Math.random() * 2 - 1);
+                        double rz = (Math.random() * 2 - 1);
+                        double rn = Math.sqrt(rx * rx + ry * ry + rz * rz) + 1e-6;
+                        double s = OUT_SPEED * (0.85 + Math.random() * 0.40);
+                        vx = (rx / rn) * s;
+                        vy = (ry / rn) * s + UP_BIAS;
+                        vz = (rz / rn) * s;
                     }
                 } else {
-                    vx *= 0.96; vy *= 0.96; vz *= 0.96;
-                    x += vx; y += vy; z += vz;
+                    vx *= 0.96;
+                    vy *= 0.96;
+                    vz *= 0.96;
+                    x += vx;
+                    y += vy;
+                    z += vz;
                 }
                 life--;
             }
@@ -172,8 +198,8 @@ public class ParticleHandler {
         final int[] tickCounter = {0};
         final boolean[] switched = {false};
 
-        playSoundTo(player, (new Location(world, cx, cy, cz)), Sound.BLOCK_PORTAL_AMBIENT, 0.65f, 0.75f);
-        playSoundTo(player, (new Location(world, cx, cy, cz)), Sound.BLOCK_BEACON_POWER_SELECT, 0.6f, 1.4f);
+        playSoundTo(player, new Location(world, cx, cy, cz), Sound.BLOCK_PORTAL_AMBIENT, 0.65f, 0.75f);
+        playSoundTo(player, new Location(world, cx, cy, cz), Sound.BLOCK_BEACON_POWER_SELECT, 0.6f, 1.4f);
 
         Bukkit.getScheduler().runTaskTimer(RegionX.getInstance(), task -> {
             Player p = Bukkit.getPlayer(uuid);
@@ -186,19 +212,19 @@ public class ParticleHandler {
             try {
                 tickCounter[0]++;
                 double ang = (tickCounter[0] * 0.35);
-                double r = 0.6 + 0.15 * Math.sin(tickCounter[0]*0.25);
+                double r = 0.6 + 0.15 * Math.sin(tickCounter[0] * 0.25);
                 double sx = cx + Math.cos(ang) * r;
                 double sz = cz + Math.sin(ang) * r;
-                double sy = cy + 0.05 * Math.sin(ang*2);
+                double sy = cy + 0.05 * Math.sin(ang * 2);
                 if (eye.getWorld() == world && eye.distanceSquared(new Location(world, sx, sy, sz)) <= max2) {
-                    sendParticle(p, P_PORTAL, sx, sy, sz, 0,0,0, 0f, 1);
-                    sendParticle(p, P_ENDROD,  cx, cy, cz,  0,0,0, 0f, 1);
+                    sendParticle(p, P_PORTAL, sx, sy, sz, 0, 0, 0, 0f, 1);
+                    sendParticle(p, P_ENDROD, cx, cy, cz, 0, 0, 0, 0f, 1);
                 }
 
                 if (!switched[0] && tickCounter[0] >= IN_TICKS) {
                     switched[0] = true;
-                    playSoundTo(player, (new Location(world, cx, cy, cz)), Sound.ENTITY_ENDERMAN_TELEPORT, 0.9f, 0.6f);
-                    playSoundTo(player, (new Location(world, cx, cy, cz)), Sound.BLOCK_BEACON_AMBIENT, 0.5f, 1.9f);
+                    playSoundTo(player, new Location(world, cx, cy, cz), Sound.ENTITY_ENDERMAN_TELEPORT, 0.9f, 0.6f);
+                    playSoundTo(player, new Location(world, cx, cy, cz), Sound.BLOCK_BEACON_AMBIENT, 0.5f, 1.9f);
                 }
 
                 Iterator<SimP> it = sim.iterator();
@@ -206,24 +232,35 @@ public class ParticleHandler {
                 while (it.hasNext()) {
                     SimP sp = it.next();
                     sp.tick();
-                    if (sp.life <= 0) { it.remove(); continue; }
+                    if (sp.life <= 0) {
+                        it.remove();
+                        continue;
+                    }
                     alive++;
                     if (eye.getWorld() != world) continue;
-                    double dx = eye.getX()-sp.x, dy = eye.getY()-sp.y, dz = eye.getZ()-sp.z;
-                    if (dx*dx+dy*dy+dz*dz > max2) continue;
+                    double dx = eye.getX() - sp.x;
+                    double dy = eye.getY() - sp.y;
+                    double dz = eye.getZ() - sp.z;
+                    if (dx * dx + dy * dy + dz * dz > max2) continue;
                     if (!sp.outPhase) {
-                        sendParticle(p, P_PORTAL, sp.x, sp.y, sp.z, 0,0,0, 0.0f, 1);
-                        if ((sp.life & 1) == 0) sendParticle(p, P_CRIT, sp.x, sp.y, sp.z, 0,0,0, 0.0f, 1);
+                        sendParticle(p, P_PORTAL, sp.x, sp.y, sp.z, 0, 0, 0, 0.0f, 1);
+                        if ((sp.life & 1) == 0) {
+                            sendParticle(p, P_CRIT, sp.x, sp.y, sp.z, 0, 0, 0, 0.0f, 1);
+                        }
                     } else {
-                        sendParticle(p, P_CLOUD, sp.x, sp.y, sp.z, 0,0,0, 0.0f, 1);
-                        if ((sp.life % 3) == 0) sendParticle(p, P_ENDROD, sp.x, sp.y, sp.z, 0,0,0, 0.0f, 1);
-                        if ((sp.life % 4) == 0) playSoundTo(player, (new Location(world, sp.x, sp.y, sp.z)), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 0.2f, 1.9f);
+                        sendParticle(p, P_CLOUD, sp.x, sp.y, sp.z, 0, 0, 0, 0.0f, 1);
+                        if ((sp.life % 3) == 0) {
+                            sendParticle(p, P_ENDROD, sp.x, sp.y, sp.z, 0, 0, 0, 0.0f, 1);
+                        }
+                        if ((sp.life % 4) == 0) {
+                            playSoundTo(player, new Location(world, sp.x, sp.y, sp.z), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 0.2f, 1.9f);
+                        }
                     }
                 }
 
                 if (alive == 0) {
-                    playSoundTo(player, (new Location(world, cx, cy, cz)), Sound.ENTITY_GENERIC_EXPLODE, 0.55f, 1.25f);
-                    playSoundTo(player, (new Location(world, cx, cy, cz)), Sound.BLOCK_BEACON_DEACTIVATE, 0.6f, 1.2f);
+                    playSoundTo(player, new Location(world, cx, cy, cz), Sound.ENTITY_GENERIC_EXPLODE, 0.55f, 1.25f);
+                    playSoundTo(player, new Location(world, cx, cy, cz), Sound.BLOCK_BEACON_DEACTIVATE, 0.6f, 1.2f);
                     task.cancel();
                 }
             } catch (Exception ex) {
@@ -260,13 +297,13 @@ public class ParticleHandler {
             double cx = x + 0.5 + Math.copySign(CORNER_BOOST, x == minX ? 1 : -1);
             double cy = y + 0.5 + CORNER_BOOST;
             double cz = z + 0.5 + Math.copySign(CORNER_BOOST, z == minZ ? 1 : -1);
-            if (eye.getWorld() != null && eye.getWorld() == p.getWorld()) {
-                if (eye.distanceSquared(new Location(eye.getWorld(), cx, cy, cz)) > (MAX_DISTANCE * MAX_DISTANCE)) {
-                    continue;
-                }
+            if (eye.getWorld() != null
+                    && eye.getWorld() == p.getWorld()
+                    && eye.distanceSquared(new Location(eye.getWorld(), cx, cy, cz)) > (MAX_DISTANCE * MAX_DISTANCE)) {
+                continue;
             }
             sendParticle(p, P_ENDROD, cx, cy, cz, 0, 0, 0, 0.0f, 1);
-            sendParticle(p, P_FLAME,  cx, cy, cz, 0, 0, 0, 0.02f, 1);
+            sendParticle(p, P_FLAME, cx, cy, cz, 0, 0, 0, 0.02f, 1);
         }
     }
 
@@ -302,7 +339,9 @@ public class ParticleHandler {
         Set<Long> seen = new HashSet<>();
         List<Location> out = new ArrayList<>();
         final java.util.function.BiConsumer<Integer[], Integer> add = (coords, dummy) -> {
-            int x = coords[0], y = coords[1], z = coords[2];
+            int x = coords[0];
+            int y = coords[1];
+            int z = coords[2];
             long key = (((long) x & 0x3FFFFFF) << 38) | (((long) z & 0x3FFFFFF) << 12) | (y & 0xFFF);
             if (seen.add(key)) out.add(new Location(world, x, y, z));
         };

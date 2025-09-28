@@ -32,8 +32,10 @@ public class ItemFrameDestroySetting extends RegionSetting {
     protected void handleEvent(Event event) {
         HangingBreakEvent hangingBreakEvent = (HangingBreakEvent) event;
         Region region = getRegionManager().getRegion(hangingBreakEvent.getEntity().getLocation());
+        Player player = hangingBreakEvent.getEntity() instanceof Player ? (Player)
+                hangingBreakEvent.getEntity() : null;
 
-        triggerAPIEvent(null, event, region);
+        triggerAPIEvent(player, event, region);
         hangingBreakEvent.setCancelled(true);
     }
 }

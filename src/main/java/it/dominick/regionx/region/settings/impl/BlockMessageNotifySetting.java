@@ -34,7 +34,7 @@ public class BlockMessageNotifySetting extends RegionSetting {
         SettingEvent settingEvent = (SettingEvent) event;
         Player player = settingEvent.getPlayer();
         if (player == null) return;
-        ChatUtils.send(player, "&cYou can't do this");
 
+        ChatUtils.send(player, "&cYou can't do this");
     }
 }

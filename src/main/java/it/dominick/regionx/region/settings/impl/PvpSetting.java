@@ -9,9 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PvPSetting extends RegionSetting {
+public class PvpSetting extends RegionSetting {
 
-    public PvPSetting(boolean active, JavaPlugin plugin, RegionManager regionManager) {
+    public PvpSetting(boolean active, JavaPlugin plugin, RegionManager regionManager) {
         super(active, plugin, regionManager);
     }
 

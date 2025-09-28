@@ -53,8 +53,11 @@ public class CmdRegion {
     @Permission("region.admin")
     public void onSetPos1(CommandSender sender) {
         if (sender instanceof Player player) {
-            regionManager.setPlayerPos1(player, player.getEyeLocation());
-            ChatUtils.send(player, "&aPosizione 1 impostata: " + formatLocation(player.getEyeLocation()));
+            Location pos1 = player.getLocation().clone()
+                    .subtract(0, 1, 0).getBlock().getLocation();
+
+            regionManager.setPlayerPos1(player, pos1);
+            ChatUtils.send(player, "&aPosizione 1 impostata: " + formatLocation(pos1));
 
             Location pos2 = regionManager.getPlayerPos2(player);
             if (pos2 != null) {
@@ -68,7 +71,8 @@ public class CmdRegion {
     public void onSetPos2(CommandSender sender) {
         if (sender instanceof Player player) {
             Location pos1 = regionManager.getPlayerPos1(player);
-            Location pos2 = player.getEyeLocation();
+            Location pos2 = player.getLocation().clone()
+                    .subtract(0, 1, 0).getBlock().getLocation();
 
             if (pos1 != null) {
                 regionManager.setPlayerPos2(player, pos2);

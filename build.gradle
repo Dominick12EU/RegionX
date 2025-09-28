@@ -82,6 +82,7 @@ tasks.named('runServer') {
             '-Xmx2G',
             '-XX:+UseG1GC',
             '-XX:+AllowEnhancedClassRedefinition',
-            '-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false'
+            '-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false',
+            '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'
     )
 }

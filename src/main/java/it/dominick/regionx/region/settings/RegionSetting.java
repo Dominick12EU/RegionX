@@ -43,6 +43,10 @@ public abstract class RegionSetting implements Setting, Listener {
         return regionManager.getRegion(location) != null;
     }
 
+    protected boolean checkIfInRegion(Region region) {
+        return regionManager.getRegion(region.getName()) != null;
+    }
+
     protected void triggerAPIEvent(Player player, Event event, Region region) {
         boolean isCancelled = event instanceof Cancellable && ((Cancellable) event).isCancelled();
         String author = plugin.getName();

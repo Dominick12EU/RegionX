@@ -22,6 +22,8 @@ public class Region extends Cuboid {
     private final Map<String, RegionSetting> settings = new HashMap<>();
     private final Set<Player> playersInside = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
+    // TODO: Add priority system
+
     public Region(String name, Location pos1, Location pos2) {
         super(name, pos1, pos2);
     }

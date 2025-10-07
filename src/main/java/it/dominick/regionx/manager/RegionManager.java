@@ -40,7 +40,13 @@ public class RegionManager {
     public void addRegion(String name, Location pos1, Location pos2) {
         Region region = new Region(name, pos1, pos2);
         regions.put(name.toLowerCase(), region);
-        saveRegion(name, pos1, pos2);
+        saveRegion(region);
+    }
+
+    public void addRegion(String name, Location pos1, Location pos2, int priority) {
+        Region region = new Region(name, pos1, pos2, priority);
+        regions.put(name.toLowerCase(), region);
+        saveRegion(region);
     }
 
     public void removeRegion(String name) {
@@ -54,7 +60,7 @@ public class RegionManager {
     public Region getRegion(Location location) {
         return regions.values().stream()
                 .filter(region -> region.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ()))
-                .findFirst()
+                .max((r1, r2) -> Integer.compare(r1.getPriority(), r2.getPriority()))
                 .orElse(null);
     }
 
@@ -66,13 +72,14 @@ public class RegionManager {
         return regions.containsKey(name.toLowerCase());
     }
 
-    public void saveRegion(String name, Location pos1, Location pos2) {
-        File regionFile = new File(regionsFolder, name.toLowerCase() + ".json");
+    public void saveRegion(Region region) {
+        File regionFile = new File(regionsFolder, region.getName().toLowerCase() + ".json");
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.addProperty("name", name);
-        jsonObject.add("pos1", locationToJson(pos1));
-        jsonObject.add("pos2", locationToJson(pos2));
+        jsonObject.addProperty("name", region.getName());
+        jsonObject.addProperty("priority", region.getPriority());
+        jsonObject.add("pos1", locationToJson(region.getMin()));
+        jsonObject.add("pos2", locationToJson(region.getMax()));
 
         try (Writer writer = new FileWriter(regionFile)) {
             gson.toJson(jsonObject, writer);
@@ -88,10 +95,11 @@ public class RegionManager {
                 try (Reader reader = new FileReader(file)) {
                     JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
                     String name = jsonObject.get("name").getAsString();
+                    int priority = jsonObject.has("priority") ? jsonObject.get("priority").getAsInt() : 0;
                     Location pos1 = jsonToLocation(jsonObject.getAsJsonObject("pos1"));
                     Location pos2 = jsonToLocation(jsonObject.getAsJsonObject("pos2"));
 
-                    Region region = new Region(name, pos1, pos2);
+                    Region region = new Region(name, pos1, pos2, priority);
 
                     JsonObject settingsObject = jsonObject.getAsJsonObject("settings");
                     if (settingsObject != null) {
@@ -103,7 +111,7 @@ public class RegionManager {
                     }
 
                     regions.put(name.toLowerCase(), region);
-                    System.out.println("Loaded region: " + name);
+                    System.out.println("Loaded region: " + name + " with priority: " + priority);
                 } catch (FileNotFoundException e) {
                     ChatUtils.error(e, "File not found: " + file.getName());
                 } catch (IOException e) {
@@ -182,6 +190,10 @@ public class RegionManager {
             }
         } else {
             jsonObject = new JsonObject();
+            jsonObject.addProperty("name", region.getName());
+            jsonObject.addProperty("priority", region.getPriority());
+            jsonObject.add("pos1", locationToJson(region.getMin()));
+            jsonObject.add("pos2", locationToJson(region.getMax()));
         }
 
         JsonObject settingsObject = jsonObject.has("settings") ? jsonObject.getAsJsonObject("settings") : new JsonObject();
@@ -199,6 +211,11 @@ public class RegionManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setRegionPriority(Region region, int priority) {
+        region.setPriority(priority);
+        saveRegion(region);
     }
 
 }

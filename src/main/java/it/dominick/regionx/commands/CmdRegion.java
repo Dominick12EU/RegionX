@@ -155,6 +155,21 @@ public class CmdRegion {
         }
     }
 
+    @Command("setpriority")
+    @Permission("region.admin")
+    public void onSetPrioritySubCommand(CommandSender sender, String name, int priority) {
+        if (sender instanceof Player player) {
+            if (!regionManager.regionExists(name)) {
+                ChatUtils.send(player, "&cLa regione '" + name + "' non esiste.");
+                return;
+            }
+
+            Region region = regionManager.getRegion(name);
+            regionManager.setRegionPriority(region, priority);
+            ChatUtils.send(player, "&aPriorita' della regione '" + name + "' impostata a: " + priority);
+        }
+    }
+
     @Command("gui")
     @Permission("region.admin")
     public void onGuiRegionsSubCommand(CommandSender sender) {
@@ -248,7 +263,16 @@ public class CmdRegion {
 
                         RegionsGuiUtil.setupBack(miscGui, regionsGui, 3, 1);
 
-                        miscGui.setItem(2, 3, ItemBuilder.from(Material.COMPASS).name(Component.text(ChatUtils.color("&aTp to region"))).asGuiItem(tpEvent -> {
+                        miscGui.setItem(2, 2, ItemBuilder.from(Material.NETHER_STAR).name(Component.text(ChatUtils.color("&bPriorita': &f" + region.getPriority()))).asGuiItem(priorityEvent -> {
+                            player.closeInventory();
+                            ChatUtils.send(player, "&eInserisci la nuova priorita' nella chat (numero intero):");
+                            
+                            // This is a simplified approach - in a real implementation, you'd use a conversation API
+                            // For now, players can use /region setpriority <name> <priority> command
+                            ChatUtils.send(player, "&7Usa: &f/region setpriority " + region.getName() + " <priorita>");
+                        }));
+
+                        miscGui.setItem(2, 4, ItemBuilder.from(Material.COMPASS).name(Component.text(ChatUtils.color("&aTp to region"))).asGuiItem(tpEvent -> {
                             Location safeLocation = LocationUtil.getSafeCenterLocation(region);
                             if (safeLocation != null) {
                                 player.teleport(safeLocation);
@@ -259,7 +283,7 @@ public class CmdRegion {
                         }));
 
                         String skullTexture = "ewogICJ0aW1lc3RhbXAiIDogMTYzMzA5ODYwMDUwNCwKICAicHJvZmlsZUlkIiA6ICIwYTUzMDU0MTM4YWI0YjIyOTVhMGNlZmJiMGU4MmFkYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJQX0hpc2lybyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS8yNmM1OTI2YzlhZjlmNDY2ZGQ0NWFkYzcxM2RjOTVkNzI3NDEzNjJjY2Y5NDVjNWU4NDA4MjcwNDc3M2M4ODhlIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=";
-                        miscGui.setItem(2, 5, ItemBuilder.skull().texture(skullTexture).name(Component.text(ChatUtils.color("&cPlayers in region"))).asGuiItem(playerListEvent -> {
+                        miscGui.setItem(2, 6, ItemBuilder.skull().texture(skullTexture).name(Component.text(ChatUtils.color("&cPlayers in region"))).asGuiItem(playerListEvent -> {
                             PaginatedGui playersInRegionGui = Gui.paginated()
                                     .title(Component.text(ChatUtils.color("&bPlayers in Region")))
                                     .rows(6)
@@ -351,6 +375,7 @@ public class CmdRegion {
         List<String> formattedLore = new ArrayList<>();
 
         formattedLore.add(ChatUtils.color("&7Nome della Region: &f" + region.getName()));
+        formattedLore.add(ChatUtils.color("&7Priorita': &f" + region.getPriority()));
         formattedLore.add(ChatUtils.color("&7Coord. Minime: &f" + region.getMinX() + ", " + region.getMinY() + ", " + region.getMinZ()));
         formattedLore.add(ChatUtils.color("&7Coord. Massime: &f" + region.getMaxX() + ", " + region.getMaxY() + ", " + region.getMaxZ()));
 

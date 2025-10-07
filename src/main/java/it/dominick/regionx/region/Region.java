@@ -21,11 +21,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Region extends Cuboid {
     private final Map<String, RegionSetting> settings = new HashMap<>();
     private final Set<Player> playersInside = Collections.newSetFromMap(new ConcurrentHashMap<>());
-
-    // TODO: Add priority system
+    private int priority;
 
     public Region(String name, Location pos1, Location pos2) {
         super(name, pos1, pos2);
+        this.priority = 0;
+    }
+
+    public Region(String name, Location pos1, Location pos2, int priority) {
+        super(name, pos1, pos2);
+        this.priority = priority;
     }
 
     @Override
